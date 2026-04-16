@@ -12,13 +12,13 @@ We solve that. **carsharingwhitelabel.com** is a fully white-labeled car sharing
 
 **Here's what's included:**
 - Branded web app and mobile app (your logo, your domain)
-- Owner onboarding, listings, and availability management
+- Customer onboarding, listings, and availability management
 - Booking, payments, and insurance integration built in
 - Ongoing hosting and support, so your team doesn't carry the tech burden
 
 You keep the relationship with your customers. We handle the infrastructure.
 
-I'd love to show you a 15-minute walkthrough. No commitment, just a look at what's possible.
+I'd love to show you a 30-minute walkthrough. No commitment, just a look at what's possible.
 
 Grab a time that works for you: https://calendly.com/jidosoju/30min
 
