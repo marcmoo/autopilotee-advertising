@@ -1,0 +1,37 @@
+# Task 01 — Enrich the 506-row seed lead list (FIRST PRIORITY)
+# Owner: OpenClaw (hands). Reads/writes leads.csv.
+id: enrich-leads
+owner: openclaw
+priority: 1
+schedule: "0 9 * * 1-5"   # weekdays 09:00, cron
+description: >
+  The seed list has companies but the email column is mostly empty. Visit each
+  company website and public profiles to find a business contact email plus
+  IG/LinkedIn handles. Do NOT re-scrape new companies here (see task 02).
+
+input:
+  seed_csv: ../../../emails/p2p_car_rental_companies.csv
+  columns: [Name, Website, Phone, Email, Location, Category, Description]
+
+steps:
+  - open Website for each row missing Email
+  - find a business/contact email (contact page, footer, mailto, about)
+  - find IG / LinkedIn / X handles if present
+  - validate email format; mark deliverability as unverified
+
+output:
+  leads_csv: ./leads.csv
+  added_columns: [email_found, contact_source, instagram, linkedin, x_handle, enriched_at, status]
+
+rate_limits:
+  pages_per_run: 60
+  delay_seconds_between_sites: [8, 25]   # randomized range
+  daily_cap_rows: 60
+
+guardrails:
+  - business addresses only; skip personal emails for EU-based contacts without basis
+  - never submit website forms during enrichment
+  - log every visited site to ../outreach-log/
+
+stop_condition:
+  - if blocked/captcha on >30% of sites in a run, pause and alert human

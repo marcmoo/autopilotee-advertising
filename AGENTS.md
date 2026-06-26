@@ -13,5 +13,6 @@ Advertising/media support repo for Autopilotee assets, prompts, and demo videos.
 
 - `promptMessages/` — prompt/message logs and campaign copy drafts.
 - `videos/` — compressed demo videos for product/marketing use.
-- `emails/` — email assets.
+- `emails/` — email assets, including cold outreach templates and lead lists.
 - `staging-tests/` — manual / Playwright-driven QA test suite for the staging web app (`https://staging.autopilotee.com`): master plan, per-area cases, end-to-end workflows, and execution results. Never commit real account passwords here; reference `staging_credentials.local` instead.
+- `marketing/` — carsharingwhitelabel.com marketing strategy, automation prompts, task definitions, and channel templates.

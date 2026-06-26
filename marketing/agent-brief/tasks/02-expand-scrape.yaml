@@ -1,0 +1,39 @@
+# Task 02 — Expand the lead pool beyond the seed CSV
+# Owner: OpenClaw (hands). Appends new rows to leads.csv.
+id: expand-scrape
+owner: openclaw
+priority: 2
+schedule: "0 10 * * 1-5"
+description: >
+  Grow the addressable list with new prospects across sources. Append to
+  leads.csv with the same schema; mark source. Dedupe against existing rows.
+
+sources:
+  - name: turo_hosts
+    where: public Turo host/listing pages by city
+    capture: [host_name, city, vehicle_types, profile_url]
+  - name: google_maps
+    query: "car rental near {city}"
+    capture: [business_name, website, phone, address]
+  - name: reddit
+    where: [r/turo, r/entrepreneur, r/smallbusiness]
+    capture: [username, post_url, context]
+  - name: facebook_groups
+    where: Turo host / car rental owner groups
+    capture: [profile, group, context]
+
+output:
+  leads_csv: ./leads.csv
+  dedupe_key: [Website, email_found, profile_url]
+  added_columns: [source, captured_at]
+
+rate_limits:
+  new_leads_per_run: 40
+  delay_seconds: [10, 30]
+
+guardrails:
+  - collect only public business info; no scraping behind logins where ToS forbids
+  - respect robots and platform ToS; read-only (no posting in this task)
+
+stop_condition:
+  - on rate-limit/captcha spike, pause source and alert human

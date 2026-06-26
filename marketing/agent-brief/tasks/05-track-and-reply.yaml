@@ -1,0 +1,28 @@
+# Task 05 — Track replies and draft responses
+# Owner: Hermes drafts replies; OpenClaw monitors inboxes/threads.
+id: track-and-reply
+owner: hermes+openclaw
+priority: 5
+schedule: "0 15 * * 1-5"
+description: >
+  Monitor email inbox, DMs, and thread replies. Update lead status. Hermes
+  drafts a suggested reply for each response; a human approves before sending.
+
+monitor:
+  - email inbox (replies, bounces, unsubscribes)
+  - platform DMs and comment replies
+
+actions:
+  - on reply: set leads.csv status = replied; Hermes drafts response to review-queue
+  - on bounce: mark email invalid; do not retry
+  - on unsubscribe/opt-out: suppress permanently; remove from all future tasks
+  - on demo booked (Calendly): set status = demo_booked; stop outreach for that lead
+
+output:
+  leads_csv_update: ./leads.csv  # status column
+  reply_drafts: ./review-queue/replies/
+  log_dir: ../outreach-log/
+
+guardrails:
+  - reply drafts only; human approves before send
+  - honor opt-outs immediately and permanently

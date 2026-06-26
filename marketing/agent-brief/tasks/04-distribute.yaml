@@ -1,0 +1,45 @@
+# Task 04 — Distribute APPROVED drafts (drip, rate-limited)
+# Owner: OpenClaw (hands). Only processes items past the human approval gate.
+id: distribute
+owner: openclaw
+priority: 4
+schedule: "0 13 * * 1-5"
+description: >
+  Send/post only items a human approved in the review queue. Drip with
+  per-channel daily caps and warm-up ramp. Log everything.
+
+input:
+  approved_dir: ./review-queue/approved/
+
+channels:
+  email:
+    sender_domain: "use dedicated subdomain with SPF/DKIM/DMARC"
+    daily_cap: 30          # week 1; ramp +10/week up to 100
+    must_include: [unsubscribe_link, physical_address, real_sender_identity]
+  reddit:
+    daily_cap: 3
+    rule: value-first; comment in-thread before any link
+  facebook:
+    daily_cap: 3
+  x:
+    daily_cap: 8
+  linkedin:
+    daily_cap: 10
+  dm:
+    daily_cap: 15
+
+warm_up:
+  week_1_multiplier: 0.3
+  ramp: "+0.2 per week until 1.0"
+
+frequency_caps:
+  max_touches_per_lead_per_30_days: 3
+  suppress_opt_outs: true
+
+output:
+  log_dir: ../outreach-log/    # timestamp, channel, lead_id, action, result, opt_out
+
+stop_condition:
+  bounce_rate_pct: 5
+  complaint_rate_pct: 0.3
+  on_exceed: "halt channel + alert human"

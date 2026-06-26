@@ -1,0 +1,40 @@
+# Task 03 — Classify leads and generate personalized copy (drafts only)
+# Owner: Hermes (Gemma 12B, the brain). Produces drafts to a review queue.
+id: classify-and-generate
+owner: hermes
+priority: 3
+schedule: "0 11 * * 1-5"
+description: >
+  For each enriched lead, classify the segment, score fit, pick the matching
+  template, and produce a personalized draft. Output goes to a human review
+  queue. NEVER send — drafts only.
+
+input:
+  leads_csv: ./leads.csv
+  templates_dir: ../templates/
+  cold_email_template: ../../../emails/outreach_template.md
+
+classify:
+  segments: [turo_host, fleet, dealer, entrepreneur, specialty, unknown]
+  fit_score: 1-5
+  write_back_columns: [segment, fit_score]
+
+generate:
+  channels:
+    - email     # template: ../templates/cold-email.md (+ outreach_template.md)
+    - reddit    # template: ../templates/reddit-post.md
+    - facebook  # template: ../templates/facebook-group.md
+    - x         # template: ../templates/x-twitter.md
+    - linkedin  # template: ../templates/linkedin.md
+    - dm        # template: ../templates/dm-outreach.md
+  rules:
+    - personalize with {Name}, {Company}, {Location}, {segment} merge fields
+    - always include carsharingwhitelabel.com + Calendly CTA
+    - value-first tone; no identical mass copy across recipients
+
+output:
+  review_queue: ./review-queue/   # one file per draft, channel-tagged, awaiting approval
+
+guardrails:
+  - drafts only; do not call any send/post action
+  - keep claims accurate to product (no overpromising features)
